@@ -1,3 +1,5 @@
+<img width="2456" height="616" alt="image" src="https://github.com/user-attachments/assets/93fbd100-b416-4363-8277-22aa85d3b366" />
+
 
 - shows word-diff for filetypes `diff` and `gitcommit`
 - uses `reverse` highlights
