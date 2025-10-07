@@ -106,14 +106,18 @@ end
 local function define_hl()
     vim.api.nvim_set_hl(0, "Reverse", { reverse = true, default = true })
 end
-define_hl()
 
-local group = vim.api.nvim_create_augroup("Wordiff", {})
-vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = define_hl })
-vim.api.nvim_create_autocmd("FileType", {
-    group = group,
-    pattern = { "diff", "gitcommit" },
-    callback = function(ctx)
-        apply_highlights(ctx.buf)
+return {
+    setup = function()
+        define_hl()
+        local group = vim.api.nvim_create_augroup("Wordiff", {})
+        vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = define_hl })
+        vim.api.nvim_create_autocmd("FileType", {
+            group = group,
+            pattern = { "diff", "gitcommit" },
+            callback = function(ctx)
+                apply_highlights(ctx.buf)
+            end
+        })
     end
-})
+}
