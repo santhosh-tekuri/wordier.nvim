@@ -7,9 +7,9 @@
 useful in following scenarios:
 - you frequently work with diff files
 - you are using `git commit -v`
-- you use git add's to interactively editing patches
+- you use `git add` to interactively editing patches
 - useful in undo picker from [picker.nvim](https://github.com/santhosh-tekuri/picker.nvim)
-  - note does not work with snacks undo picker as the preview filetype is not `diff`
+  - unfortunately this does not work with snacks undo picker as the preview filetype is not `diff`
 
 ## Plugin ID
 
