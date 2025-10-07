@@ -3,9 +3,10 @@ local ns = vim.api.nvim_create_namespace("word_diff")
 local function diff_nodes(bufnr, del, add)
     local a = vim.treesitter.get_node_text(del, bufnr)
     local b = vim.treesitter.get_node_text(add, bufnr)
-    a = table.concat(vim.split(a, ""), "\n")
-    b = table.concat(vim.split(b, ""), "\n")
-    local hunks = vim.diff(a, b, { result_type = "indices" }) --[[@as integer[][]?]]
+    local hunks = vim.diff(
+        table.concat(vim.split(a, ""), "\n"),
+        table.concat(vim.split(b, ""), "\n"),
+        { result_type = "indices" }) --[[@as integer[][]?]]
     assert(hunks and #hunks > 1)
     for _, h in ipairs(hunks) do
         if h[2] == 0 then
@@ -15,6 +16,8 @@ local function diff_nodes(bufnr, del, add)
             h[3] = h[3] + 1
         end
     end
+
+    -- merge nearby hunks to reduce noise
     local mhunks = { hunks[2] }
     for j = 2, #hunks do
         local m, n = mhunks[#mhunks], hunks[j]
@@ -25,6 +28,8 @@ local function diff_nodes(bufnr, del, add)
             table.insert(mhunks, n)
         end
     end
+
+    -- set extmark highlights
     local drow = del:start()
     local arow = add:start()
     for _, h in ipairs(mhunks) do
