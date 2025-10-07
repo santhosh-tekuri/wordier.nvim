@@ -123,7 +123,7 @@ local function setup()
             apply_highlights(ctx.buf)
             vim.api.nvim_buf_attach(ctx.buf, false, {
                 on_lines = function()
-                    apply_highlights(ctx.buf)
+                    vim.schedule_wrap(apply_highlights)(ctx.buf)
                 end
             })
         end
