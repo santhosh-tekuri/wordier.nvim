@@ -18,7 +18,7 @@ local function diff_nodes(bufnr, del, add)
     local mhunks = { hunks[2] }
     for j = 2, #hunks do
         local m, n = mhunks[#mhunks], hunks[j]
-        if m[3] - m[3] - m[4] < 5 then
+        if n[3] - m[3] - m[4] < 5 then
             m[4] = n[3] + n[4] - m[3]
             m[2] = n[1] + n[2] - m[1]
         else
@@ -107,17 +107,22 @@ local function define_hl()
     vim.api.nvim_set_hl(0, "Reverse", { reverse = true, default = true })
 end
 
-return {
-    setup = function()
-        define_hl()
-        local group = vim.api.nvim_create_augroup("Wordiff", {})
-        vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = define_hl })
-        vim.api.nvim_create_autocmd("FileType", {
-            group = group,
-            pattern = { "diff", "gitcommit" },
-            callback = function(ctx)
-                apply_highlights(ctx.buf)
-            end
-        })
-    end
-}
+local function setup()
+    define_hl()
+    local group = vim.api.nvim_create_augroup("Wordiff", {})
+    vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = define_hl })
+    vim.api.nvim_create_autocmd("FileType", {
+        group = group,
+        pattern = { "diff", "gitcommit" },
+        callback = function(ctx)
+            apply_highlights(ctx.buf)
+            vim.api.nvim_buf_attach(ctx.buf, false, {
+                on_lines = function()
+                    apply_highlights(ctx.buf)
+                end
+            })
+        end
+    })
+end
+
+return { setup = setup }
