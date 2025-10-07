@@ -1,4 +1,4 @@
-local ns = vim.api.nvim_create_namespace("word_diff")
+local ns = vim.api.nvim_create_namespace("wordiff")
 
 local function diff_nodes(bufnr, del, add)
     local a = vim.treesitter.get_node_text(del, bufnr)
