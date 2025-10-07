@@ -48,6 +48,15 @@ local function diff_nodes(bufnr, del, add)
     end
 end
 
+local function count_sibling_group(node)
+    local n, t = 0, node:type()
+    while node and node:type() == t do
+        n = n + 1
+        node = node:next_sibling()
+    end
+    return n
+end
+
 local function apply_diff_highlights(bufnr, root)
     local query = vim.treesitter.query.parse("diff", "(location) @location")
     for _, loc in query:iter_captures(assert(root)) do
@@ -79,11 +88,12 @@ local function apply_diff_highlights(bufnr, root)
                 del = add
                 goto next_hunk
             end
-
-            while del and add and del:type() == "deletion" and add:type() == "addition" do
-                diff_nodes(bufnr, del, add)
-                del = del:next_sibling()
-                add = add:next_sibling()
+            if count_sibling_group(del) == count_sibling_group(add) then
+                while del and add and del:type() == "deletion" and add:type() == "addition" do
+                    diff_nodes(bufnr, del, add)
+                    del = del:next_sibling()
+                    add = add:next_sibling()
+                end
             end
             del = add
             ::next_hunk::
