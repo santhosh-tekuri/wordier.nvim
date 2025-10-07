@@ -49,9 +49,18 @@ local function diff_nodes(bufnr, del, add)
 end
 
 local function apply_diff_highlights(bufnr, root)
-    local query = vim.treesitter.query.parse("diff", "(changes) @changes")
-    for _, ch in query:iter_captures(assert(root)) do
-        local del = ch:child(0)
+    local query = vim.treesitter.query.parse("diff", "(location) @location")
+    for _, loc in query:iter_captures(assert(root)) do
+        local ch = loc:next_sibling()
+        if not ch then
+            goto next_change
+        end
+        local del
+        if ch:type() == "changes" then
+            del = ch:child(0)
+        else
+            del = ch
+        end
         while del do
             while del and del:type() ~= "deletion" do
                 del = del:next_sibling()
