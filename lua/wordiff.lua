@@ -3,7 +3,7 @@ local ns = vim.api.nvim_create_namespace("wordiff")
 local function diff_nodes(bufnr, del, add)
     local a = vim.treesitter.get_node_text(del, bufnr)
     local b = vim.treesitter.get_node_text(add, bufnr)
-    a, b = " " .. a:sub(2), " " .. b:sub(2)
+    a, b = " " .. a:sub(2), " " .. b:sub(2) -- replace change markers with space
     local hunks = vim.diff(
         table.concat(vim.split(a, ""), "\n"),
         table.concat(vim.split(b, ""), "\n"),
@@ -34,7 +34,7 @@ local function diff_nodes(bufnr, del, add)
 
     -- set extmark highlights
     if #mhunks == 1 and vim.deep_equal(mhunks[1], { 2, #a - 1, 2, #b - 1 }) then
-        return
+        return -- complete line changed
     end
     local drow = del:start()
     local arow = add:start()
